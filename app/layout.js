@@ -1,6 +1,7 @@
 import { Geist_Mono,Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
+import Header from "@/components/HeaderComp";
 
 const zalandoSans = localFont({
   src: [
@@ -49,6 +50,7 @@ export default function RootLayout({ children }) {
       <body
         className={`${zalandoSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}
       >
+        <Header />
         {children}
       </body>
     </html>

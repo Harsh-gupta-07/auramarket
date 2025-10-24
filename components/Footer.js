@@ -1,93 +1,63 @@
-import React from 'react';
-import { Twitter, Facebook, Instagram } from 'lucide-react';
+import Image from "next/image";
+import React from "react";
 
-export default function NikeFooter() {
+export default function Footer() {
   return (
-    <footer className="bg-black text-gray-400 py-12 px-8">
+    <footer className="bg-base-200 text-base-content px-8 py-10">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-          {/* Nike Logo */}
-          <div className="flex items-start">
-            <p className='text-white text-2xl'>AuraMarket</p>
-          </div>
+        <div className="footer flex flex-col sm:footer-horizontal sm:flex-row sm:flex-wrap justify-between gap-10 text-base">
+          <aside className="sm:w-1/4">
+            <p className="text-2xl font-semibold">AuraMarket</p>
+            <p className="text-sm mt-2 text-gray-500 leading-relaxed">
+              Your one-stop shop for everything you need — electronics, fashion,
+              and more.
+            </p>
+          </aside>
 
-          {/* Featured */}
-          <div>
-            <h3 className="text-white font-medium mb-4">Featured</h3>
-            <ul className="space-y-3">
-              <li><a href="#" className="hover:text-white transition-colors">Air Force 1</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Huarache</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Air Max 90</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Air Max 95</a></li>
-            </ul>
-          </div>
+          <nav className="sm:w-1/5">
+            <h6 className="footer-title">Categories</h6>
+            <a className="link link-hover">Electronics</a>
+            <a className="link link-hover">Fashion</a>
+            <a className="link link-hover">Home & Kitchen</a>
+            <a className="link link-hover">Beauty & Health</a>
+          </nav>
 
-          {/* Shoes */}
-          <div>
-            <h3 className="text-white font-medium mb-4">Categories</h3>
-            <ul className="space-y-3">
-              <li><a href="#" className="hover:text-white transition-colors">All Products</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Electronics</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Fashion</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Home & Kitchen</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Beauty & Health</a></li>
-            </ul>
-          </div>
+          <nav className="sm:w-1/5">
+            <h6 className="footer-title">Customer Service</h6>
+            <a className="link link-hover">Help Center</a>
+            <a className="link link-hover">Returns</a>
+            <a className="link link-hover">Shipping Info</a>
+            <a className="link link-hover">Order Tracking</a>
+          </nav>
 
-          {/* Clothing */}
-          <div>
-            <h3 className="text-white font-medium mb-4">Clothing</h3>
-            <ul className="space-y-3">
-              <li><a href="#" className="hover:text-white transition-colors">All Clothing</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Hoodies</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Jeans</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Shirts & Tops</a></li>
-            </ul>
-          </div>
+          <nav className="sm:w-1/5">
+            <h6 className="footer-title">Company</h6>
+            <a className="link link-hover">About Us</a>
+            <a className="link link-hover">Careers</a>
+            <a className="link link-hover">Contact</a>
+            <a className="link link-hover">Privacy Policy</a>
+          </nav>
 
-          {/* Kids' */}
-          <div>
-            <h3 className="text-white font-medium mb-4">Electronics</h3>
-            <ul className="space-y-3">
-              <li><a href="#" className="hover:text-white transition-colors">Smartphone</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">TV</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Fridge</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Washing Machine</a></li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Social Icons */}
-        <div className="flex justify-end gap-3 mt-12">
-          <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
-            <Twitter className="w-5 h-5 text-white" />
-          </a>
-          <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
-            <Facebook className="w-5 h-5 text-white" />
-          </a>
-          <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors">
-            <Instagram className="w-5 h-5 text-white" />
-          </a>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="flex flex-col md:flex-row justify-between items-center mt-12 pt-6 border-t border-gray-800 text-sm">
-          <div className="flex items-center gap-4 mb-4 md:mb-0">
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-              </svg>
-              <span>India</span>
+          <nav className="sm:w-1/5">
+            <h6 className="footer-title">Follow Us</h6>
+            <div className="flex gap-3">
+              <button className="btn btn-ghost btn-circle">
+                <Image src="/twitter.svg" width={25} height={25} alt="twitter" />
+                
+              </button>
+              <button className="btn btn-ghost btn-circle">
+                <Image src="/linkedin.svg" width={25} height={25} alt="linkedin" />
+                
+              </button>
+              <button className="btn btn-ghost btn-circle">
+                <Image src="/insta.svg" width={25} height={25} alt="insta" />
+              </button>
             </div>
-            <span>© 2025 AuraMarket, Inc. All Rights Reserved</span>
-          </div>
-          
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-white transition-colors">Guides</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Sale</a>
-            <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
-            <a href="#" className="hover:text-white transition-colors">AuraMarket Privacy Policy</a>
-          </div>
+          </nav>
+        </div>
+
+        <div className="text-center border-t border-base-300 mt-10 pt-6 text-sm text-gray-500">
+          © 2025 AuraMarket. All rights reserved.
         </div>
       </div>
     </footer>
