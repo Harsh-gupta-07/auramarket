@@ -4,7 +4,7 @@ function ProductCard({product}) {
   return (
     <div
       key={product.id}
-      className="card bg-white  hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+      className="card bg-white  transition-shadow duration-300 cursor-pointer"
     >
       <figure className="relative">
         <img
@@ -24,7 +24,7 @@ function ProductCard({product}) {
           </div>
         )}
       </figure>
-      <div className="card-body">
+      <div className="card-body  ">
         <h2 className="card-title justify-between">
           {product.name}
           <span className="text-base font-semibold">{product.price}</span>

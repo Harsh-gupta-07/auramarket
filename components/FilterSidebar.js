@@ -21,18 +21,6 @@ export default function FilterSidebar() {
 
   return (
     <div className="w-80 bg-white p-6 min-h-screen">
-      {/* Header */}
-      <h1 className="text-2xl font-semibold mb-6">New (500)</h1>
-      
-      {/* Categories */}
-      <div className="space-y-2 mb-8">
-        <button className="block w-full text-left py-2 hover:text-gray-600">Low Top</button>
-        <button className="block w-full text-left py-2 hover:text-gray-600">High Top</button>
-        <button className="block w-full text-left py-2 hover:text-gray-600">Skateboarding</button>
-        <button className="block w-full text-left py-2 hover:text-gray-600">Nike By You</button>
-      </div>
-
-      <div className="divider my-6"></div>
 
       {/* Gender Section */}
       <div className="mb-6">
@@ -40,24 +28,32 @@ export default function FilterSidebar() {
           onClick={() => toggleSection('gender')}
           className="flex justify-between items-center w-full font-semibold text-lg mb-4"
         >
-          Gender
+          Price
           {openSections.gender ? <Image src="/ChevronUp.svg" alt='arrow-up' width={20} height={20}/> : <Image src="/ChevronDown.svg" alt='arrow-up' width={20} height={20}/>}
         </button>
         
         {openSections.gender && (
           <div className="space-y-3">
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
-              <span>Men</span>
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
+              <span>&#60;$100</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
-              <span>Women</span>
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
+              <span>&#60;$250</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
-              <span>Unisex</span>
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
+              <span>&#60;$500</span>
             </label>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
+              <span>
+                greater than $500</span>
+            </label>
+            <div>
+              
+            </div>
           </div>
         )}
       </div>
@@ -77,11 +73,11 @@ export default function FilterSidebar() {
         {openSections.kids && (
           <div className="space-y-3">
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>Boys</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>Girls</span>
             </label>
           </div>
@@ -103,19 +99,19 @@ export default function FilterSidebar() {
         {openSections.price && (
           <div className="space-y-3">
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>$25 - $50</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>$50 - $100</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>$100 - $150</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>Over $150</span>
             </label>
           </div>
@@ -150,15 +146,15 @@ export default function FilterSidebar() {
         {openSections.sports && (
           <div className="space-y-3">
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>Lifestyle</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>Skateboarding</span>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm" />
+              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
               <span>Dance</span>
             </label>
           </div>

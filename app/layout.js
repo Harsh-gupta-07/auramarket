@@ -50,7 +50,6 @@ export default function RootLayout({ children }) {
       <body
         className={`${zalandoSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}
       >
-        <Header />
         {children}
       </body>
     </html>

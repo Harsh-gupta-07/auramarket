@@ -6,6 +6,7 @@ import Trending from "@/components/Trending";
 
 export default function Home() {
   return (<>
+    <Header />
     <Hero/>
     <BestOfAuramarket />
     <Trending />

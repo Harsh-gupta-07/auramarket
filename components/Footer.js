@@ -9,7 +9,7 @@ export default function Footer() {
           <aside className="sm:w-1/4">
             <p className="text-2xl font-semibold">AuraMarket</p>
             <p className="text-sm mt-2 text-gray-500 leading-relaxed">
-              Your one-stop shop for everything you need — electronics, fashion,
+              Your one-stop shop for everything you need electronics, fashion,
               and more.
             </p>
           </aside>
