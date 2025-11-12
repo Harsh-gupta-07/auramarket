@@ -1,6 +1,6 @@
 export async function signup(name, email, password) {
   try {
-    const res = await fetch("http://localhost:10000/signup", {
+    const res = await fetch("https://auramarket-server.onrender.com", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
