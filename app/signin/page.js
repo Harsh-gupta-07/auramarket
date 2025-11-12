@@ -1,10 +1,41 @@
 "use client";
 import Squares from "@/components/Squares";
+import { login } from "@/utills/login";
+import isStrongPassword from "@/utills/passwordValidator";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useRef, useState } from "react";
+import { redirect, RedirectType } from "next/navigation";
 
 export default function page() {
+  const password = useRef("");
+  const email = useRef("");
+  const [error, setError] = useState("");
+  const [load, setLoad] = useState(false);
+  async function handle() {
+    const refemail = email.current.value;
+    const refpassword = password.current.value;
+    if (!refemail || refemail.trim() == "") {
+      return setError("Please Enter a valid Email.");
+    }
+    if (!refpassword || refpassword.trim()) {
+      const check = isStrongPassword(refpassword);
+      if (!check.passed) {
+        return setError(check.msg);
+      }
+    }
+    setLoad(true);
+    setError("");
+    const res = await login(refemail, refpassword);
+    if (res.status == "failed") {
+      setLoad(false);
+      return setError(res.message);
+    }
+    setError("");
+    localStorage.setItem("token", res.token);
+    redirect("/", RedirectType.replace);
+  }
+
   return (
     <div className="flex h-screen">
       {/* Left Section */}
@@ -69,12 +100,13 @@ export default function page() {
           </div>
 
           {/* Form */}
-          <form className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <div>
               <label className="label">
                 <span className="label-text font-medium">Email</span>
               </label>
               <input
+                ref={email}
                 type="email"
                 placeholder="johndoe@gmail.com"
                 className="bg-white input input-neutral w-full rounded-xl"
@@ -87,15 +119,36 @@ export default function page() {
               </label>
               <input
                 type="password"
-                placeholder="minimum 8 characters"
+                ref={password}
+                placeholder="password"
                 className="bg-white input input-neutral w-full rounded-xl"
               />
             </div>
-
-            <button className="btn bg-black text-white hover:bg-neutral-800 w-full mt-3 rounded-full">
-              Sign in
-            </button>
-          </form>
+            <div>
+              {error ? (
+                <span className="flex justify-center text-red-600 text-md">
+                  <Image src="/error.svg" width={20} height={20} alt="error" />
+                  {error}
+                </span>
+              ) : (
+                ""
+              )}
+              {load ? (
+                <button
+                  className="btn bg-black text-white hover:bg-neutral-800 w-full mt-0 rounded-full"
+                >
+                  <span className="loading loading-spinner text-white"></span>
+                </button>
+              ) : (
+                <button
+                  onClick={handle}
+                  className="btn bg-black text-white hover:bg-neutral-800 w-full mt-0 rounded-full"
+                >
+                  Sign in
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

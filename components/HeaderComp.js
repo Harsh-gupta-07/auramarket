@@ -31,7 +31,7 @@ function Header() {
             tabIndex={0}
             className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
           >
-            <li>
+            <li className="shadow">
               <Link href="/">Home</Link>
             </li>
             <li>
@@ -48,7 +48,7 @@ function Header() {
       </div>
 
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">
+        <ul className="menu menu-horizontal px-1 rounded">
           <li>
             <Link href="/">Home</Link>
           </li>
@@ -86,9 +86,9 @@ function Header() {
             </span>
           </div>
         </button>
-        <button className="btn btn-ghost" >
+        <Link href="/signin" className="btn btn-ghost" >
           Sign In
-        </button>
+        </Link>
       </div>
     </div>
   );

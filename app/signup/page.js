@@ -1,11 +1,46 @@
 "use client";
 import Squares from "@/components/Squares";
+import isStrongPassword from "@/utills/passwordValidator";
+import { signup } from "@/utills/signup";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-
+import React, { useRef, useState } from "react";
+import { redirect, RedirectType } from 'next/navigation'
 
 export default function page() {
+  const [error, setError] = useState("")
+  const name = useRef("")
+  const email = useRef("")
+  const password = useRef("")
+  const [load,setLoad] = useState(false)
+  async function handle() {
+    const refemail = email.current.value;
+    const refpassword = password.current.value;
+    const fullname = name.current.value
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!refemail || refemail.trim() == "" || !emailRegex.test(refemail)) {
+      return setError("Please Enter a valid Email.");
+    }
+    if (!refpassword || refpassword.trim()) {
+      const check = isStrongPassword(refpassword)
+      if (!check.passed){
+        return setError(check.msg)
+      }
+    }
+    if (!fullname || fullname.trim()=="") {
+      return setError("Name cannot be empty.");
+    }
+    setLoad(true)
+    setError("")
+    const res = await signup(fullname,refemail,refpassword)
+    if (res.status=="failed"){
+      setLoad(false)
+      return setError(res.message)
+    }
+    setError("")
+    localStorage.setItem("token",res.token)
+    redirect("/",RedirectType.replace)
+  }
   return (
     <div className="flex h-screen">
       {/* Left Section */}
@@ -38,7 +73,10 @@ export default function page() {
         <div className="w-[420px]">
           <p className="text-center text-gray-600 text-sm font-light">
             Already have an account?{" "}
-            <Link href="/signin" className="link link-hover font-bold underline text-black">
+            <Link
+              href="/signin"
+              className="link link-hover font-bold underline text-black"
+            >
               Sign In
             </Link>
           </p>
@@ -53,7 +91,16 @@ export default function page() {
           {/* Social Buttons */}
           <div className="flex flex-col gap-3">
             <button className="btn btn-outline w-full gap-2 rounded-full">
-              <span><Image src="/google.svg" className="text-red" alt="google" width={16} height={16} /></span> Continue with Google
+              <span>
+                <Image
+                  src="/google.svg"
+                  className="text-red"
+                  alt="google"
+                  width={16}
+                  height={16}
+                />
+              </span>{" "}
+              Continue with Google
             </button>
           </div>
 
@@ -62,13 +109,14 @@ export default function page() {
           </div>
 
           {/* Form */}
-          <form className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <div>
               <label className="label">
                 <span className="label-text font-medium">Full Name</span>
               </label>
               <input
                 type="text"
+                ref={name}
                 placeholder="Enter your full name"
                 className="bg-white input input-neutral w-full rounded-xl"
               />
@@ -80,6 +128,7 @@ export default function page() {
               </label>
               <input
                 type="email"
+                ref={email}
                 placeholder="johndoe@gmail.com"
                 className="bg-white input input-neutral w-full rounded-xl"
               />
@@ -90,16 +139,39 @@ export default function page() {
                 <span className="label-text font-medium">Password</span>
               </label>
               <input
-                type="password"
-                placeholder="minimum 8 characters"
+                type="text"
+                ref={password}
+                placeholder="password"
                 className="bg-white input input-neutral w-full rounded-xl"
               />
+              <p className="text-xs text-gray-600 pt-2 p-1">Minimum 8 charcters including upper and lower case characters, numbers and speical characters.</p>
             </div>
 
-            <button className="btn bg-black text-white hover:bg-neutral-800 w-full mt-3 rounded-full">
-              Sign Up
-            </button>
-          </form>
+            <div>
+              {error ? (
+                <span className="flex justify-center text-red-600 text-md">
+                  <Image src="/error.svg" width={20} height={20} alt="error" />
+                  {error}
+                </span>
+              ) : (
+                ""
+              )}
+              {load ? (
+                <button
+                  className="btn bg-black text-white hover:bg-neutral-800 w-full mt-0 rounded-full"
+                >
+                  <span className="loading loading-spinner text-white"></span>
+                </button>
+              ) : (
+                <button
+                  onClick={handle}
+                  className="btn bg-black text-white hover:bg-neutral-800 w-full mt-0 rounded-full"
+                >
+                  Sign Up
+                </button>
+              )}
+            </div>
+          </div>
 
           <p className="text-xs text-gray-500 mt-5 text-center">
             By signing up, you agree to our{" "}
