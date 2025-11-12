@@ -1,6 +1,6 @@
 export async function signup(name, email, password) {
   try {
-    const res = await fetch("https://auramarket-server.onrender.com", {
+    const res = await fetch("https://auramarket-server.onrender.com/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -14,6 +14,8 @@ export async function signup(name, email, password) {
     const data = await res.json()
     return data;
   } catch (err) {
+
     console.log(err);
+    return {status:"failed", message: "Server Error"}
   }
 }
