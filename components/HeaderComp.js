@@ -1,10 +1,19 @@
 "use client";
+import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
 
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
+  const [userToken, setUserToken] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setUserToken(token);
+    }
+  }, []);
 
   return (
     <div className="navbar bg-white shadow-md px-6">
@@ -86,9 +95,19 @@ function Header() {
             </span>
           </div>
         </button>
-        <Link href="/signin" className="btn btn-ghost" >
-          Sign In
-        </Link>
+        {userToken ? (
+          <Image
+            src="/profile.svg"
+            alt="Profile"
+            width={30}
+            height={30}
+            className="rounded-full cursor-pointer"
+          />
+        ) : (
+          <Link href="/signin" className="btn btn-ghost">
+            Sign In
+          </Link>
+        )}
       </div>
     </div>
   );
