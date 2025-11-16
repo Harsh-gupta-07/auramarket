@@ -38,16 +38,16 @@ function Header() {
 
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-white rounded-box w-40"
           >
-            <li className="shadow">
-              <Link href="/">Home</Link>
+            <li>
+              <Link href="/" className="btn btn-ghost textarea-md">Home</Link>
             </li>
             <li>
-              <Link href="/browse">Browse</Link>
+              <Link href="/browse" className="btn btn-ghost textarea-md">Browse</Link>
             </li>
             <li>
-              <Link href="/">Contact</Link>
+              <Link href="/" className="btn btn-ghost textarea-md">Contact</Link>
             </li>
           </ul>
         </div>
@@ -59,13 +59,13 @@ function Header() {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1 rounded">
           <li>
-            <Link href="/">Home</Link>
+            <Link href="/" className="btn btn-ghost">Home</Link>
           </li>
           <li>
-            <Link href="/browse">Browse</Link>
+            <Link href="/browse" className="btn btn-ghost">Browse</Link>
           </li>
           <li>
-            <Link href="/">Contact</Link>
+            <Link href="/" className="btn btn-ghost">Contact</Link>
           </li>
         </ul>
       </div>
@@ -96,13 +96,34 @@ function Header() {
           </div>
         </button>
         {userToken ? (
-          <Image
-            src="/profile.svg"
-            alt="Profile"
-            width={30}
-            height={30}
-            className="rounded-full cursor-pointer"
-          />
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="btn btn-ghost btn-circle hover:bg-white hover:border-none hover:shadow-none active:bg-white">
+              <div className="w-10 rounded-full">
+                <Image
+                  src="/profile.svg"
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                />
+              </div>
+            </div>
+            <ul
+              tabIndex={0}
+              className="menu dropdown-content bg-white rounded-box z-[1] w-40 p-2 shadow"
+            >
+              <li>
+                <button
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                  }}
+                  className="btn btn-ghost"
+                >
+                  Sign Out
+                </button>
+              </li>
+            </ul>
+          </div>
         ) : (
           <Link href="/signin" className="btn btn-ghost">
             Sign In

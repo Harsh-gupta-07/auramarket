@@ -1,6 +1,6 @@
 export async function login(email, password) {
   try {
-    const res = await fetch("https://auramarket-server.onrender.com/login", {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
