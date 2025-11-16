@@ -1,129 +1,90 @@
-Auramarket – E-Commerce Website
+# Auramarket - E-Commerce Website
 
-🚀 Live Deployment
-	•	Frontend (Vercel): https://auramarket.vercel.app/
+## Project Overview
 
-Backend Repo : https://github.com/Harsh-gupta-07/Auramarket-server
+Auramarket is a modern, user-friendly e-commerce website that enables customers to browse, search, and purchase products seamlessly online. The platform features dynamic product listings, secure payment integration, responsive design for all devices, and an intuitive user interface for smooth navigation. It also includes an admin dashboard for managing products, orders, and customer data efficiently.
 
-⸻
+## Project Links
 
-📌 Project Overview
+### Repository Links
+- **Frontend Repository**: [GitHub - Auramarket](https://github.com/Harsh-gupta-07/auramarket)
+- **Backend Repository**: [GitHub - Auramarket-Server](https://github.com/Harsh-gupta-07/Auramarket-server)
 
-Auramarket is a modern and responsive e-commerce platform designed to deliver a seamless shopping experience. It enables users to browse, search, and purchase products online with secure authentication and an intuitive interface. Admins can efficiently manage products, orders, and users through a dedicated dashboard.
+### Live Deployment Links
+- **Live Website**: [https://auramarket.vercel.app](https://auramarket.vercel.app/)
 
-⸻
+## Problem Statement
 
-🧩 Problem Statement
+This project aims to create a reliable and scalable digital marketplace that enhances the shopping experience while simplifying business operations. The platform addresses the need for a comprehensive e-commerce solution with robust features for both customers and administrators.
 
-This project aims to build a scalable and user-friendly e-commerce system that:
-	•	Displays dynamic product listings
-	•	Provides secure authentication & authorization
-	•	Offers a smooth checkout process
-	•	Includes admin capabilities for managing the marketplace
-	•	Ensures performance and usability across all devices
+## System Architecture
 
-⸻
+The proposed e-commerce system follows a **three-tier architecture** consisting of:
 
-🏛️ System Architecture
+- **Frontend**: Next.js
+- **Backend (API)**: Node.js with Express.js
+- **Database**: MySQL with Prisma ORM
 
-Auramarket follows a three-tier architecture:
+### Authentication
+- **Method**: JWT (JSON Web Token)
 
-1. Frontend
-	•	Technology: Next.js, React.js, TailwindCSS
-	•	Features: UI, routing, product pages, user dashboard
-	•	Hosting: Vercel
+### Hosting
+- **Frontend**: Deployed on Vercel
+- **Backend**: Hosted on Render
+- **Database**: NeonDB
 
-2. Backend (API)
-	•	Technology: Node.js, Express.js
-	•	Features: REST APIs, authentication, business logic
-	•	Hosting: Render
+## Key Features
 
-3. Database
-	•	Technology: MySQL with Prisma ORM
-	•	Hosting: NeonDB
+### Authentication & Authorization
+- Secure user registration, login, and logout functionality using JWT-based authentication
+- **User Roles**:
+  - **Admin**: Can manage all products, view orders, and handle user accounts
+  - **User**: Can browse products, manage cart, and place orders
+- Protected routes and restricted access based on user roles
 
-Authentication
-	•	Method: JWT-based secure authentication
-	•	Supports both Admin and User roles
+### CRUD Operations
+Full CRUD (Create, Read, Update, Delete) functionalities for core entities:
+- **Products**: Admins can add, edit, or remove products
+- **Users**: Update user information, cart operations
+- **Orders**: Users can create and view their orders; admins can update order status
 
-⸻
+### Frontend Routing (Next.js Folder Routing)
+- **Home**: Display featured and categorized products
+- **Login / Signup**: User authentication and registration
+- **Dashboard**: Personalized area for users or admins to manage their activities
+- **Product Details**: Detailed view of each product with "Add to Cart" and "Buy Now" options
+- **Profile**: Manage user information and view order history
+- **Cart & Checkout**: Manage selected products and complete purchases securely
 
-✨ Key Features
+### Product Search & Filtering
+- Allows users to quickly find products using search keywords, category filters, and price range sliders for an optimized shopping experience
 
-🔐 Authentication & Authorization
-	•	Secure signup, login, logout
-	•	JWT-based route protection
-	•	Role-based access control:
-	•	Admin: manage products, view orders, manage users
-	•	User: manage profile, use cart, place orders
+### Dynamic Product Loading
+- Implements infinite scrolling or "load more" functionality to dynamically fetch and display products as the user scrolls, improving performance and user experience
 
-🛒 CRUD Operations
-	•	Products: Add, update, delete (Admin), view (all)
-	•	Users: Manage profile, update info
-	•	Orders: Create/view orders (User), update status (Admin)
+## Tech Stack
 
-🌐 Frontend Routing (Next.js)
-	•	Home Page – Featured & categorized products
-	•	Login/Signup – User authentication
-	•	Dashboard – User/Admin specific actions
-	•	Product Details – With cart & buy options
-	•	Profile – Personal info & order history
-	•	Cart & Checkout – Secure checkout flow
+| Layer | Technologies |
+|-------|--------------|
+| **Frontend** | React.js, NextJS, TailwindCSS |
+| **Backend** | Node.js, Express.js |
+| **Database** | MySQL |
+| **Authentication** | JWT |
+| **Hosting** | Vercel, Render |
 
-🔍 Search & Filtering
-	•	Category filtering
-	•	Price range filter
-	•	Search by product name/keywords
+## API Overview
 
-♾️ Dynamic Product Loading
-	•	Infinite scrolling / Load more
-	•	Optimized performance through API-based pagination
-
-☁️ Hosting Overview
-	•	Frontend: Vercel
-	•	Backend: Render
-	•	Database: NeonDB
-
-⸻
-
-🛠️ Tech Stack
-
-Layer	Technologies
-Frontend	React.js, Next.js, TailwindCSS
-Backend	Node.js, Express.js
-Database	MySQL, Prisma ORM
-Authentication	JWT
-Hosting	Vercel, Render
-
-
-⸻
-
-📡 API Endpoints Overview
-
-Authentication
-
-Endpoint	Method	Description	Access
-/api/auth/signup	POST	Register new user	Public
-/api/auth/login	POST	User login, returns JWT	Public
-/api/auth/logout	POST	Logout user	Authenticated
-
-Users
-
-Endpoint	Method	Description	Access
-/api/users/:id	GET	Get user profile	Authenticated
-
-Products
-
-Endpoint	Method	Description	Access
-/api/products	GET	Get all products	Public
-/api/products/:id	GET	Get product details	Public
-/api/products	POST	Add new product	Admin only
-/api/products/:id	PUT	Update product	Admin only
-/api/products/:id	DELETE	Delete product	Admin only
-
-Orders
-
-Endpoint	Method	Description	Access
-/api/orders	POST	Create order	Authenticated
-/api/orders/:id	GET	View order details	Authenticated
-/api/orders	GET	View all orders	Admin only
+| Endpoint | Method | Description | Access |
+|----------|--------|-------------|---------|
+| `/api/auth/signup` | POST | Register a new user | Public |
+| `/api/auth/login` | POST | Authenticate user credentials and return a JWT | Public |
+| `/api/auth/logout` | POST | Log out user and invalidate token | Authenticated |
+| `/api/users/:id` | GET | Fetch user profile details | Authenticated |
+| `/api/products` | GET | Retrieve all available products | Public |
+| `/api/products/:id` | GET | Get details of a specific product | Public |
+| `/api/products` | POST | Add a new product to the store | Admin only |
+| `/api/products/:id` | PUT | Update product details | Admin only |
+| `/api/products/:id` | DELETE | Delete a product from the database | Admin only |
+| `/api/orders` | POST | Place a new order | Authenticated |
+| `/api/orders/:id` | GET | View specific order details | Authenticated |
+| `/api/orders` | GET | Get all active orders (admin dashboard) | Admin only |
