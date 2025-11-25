@@ -1,5 +1,5 @@
 import BestOfAuramarket from "@/components/BestOfAuramarket";
-import Footer from "@/components/Footer";
+import Footer from "@/components/MainFooter";
 import Header from "@/components/HeaderComp";
 import Hero from "@/components/Hero";
 import Trending from "@/components/Trending";

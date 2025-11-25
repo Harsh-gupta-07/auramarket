@@ -1,75 +1,84 @@
-import FilterSidebar from '@/components/FilterSidebar'
-import ProductCard from '@/components/ProductCard'
-import React from 'react'
+"use client"
+import FilterSidebar from "@/components/FilterSidebar";
+import { getProducts } from "@/utills/getProducts";
+import { useEffect, useState } from "react";
 
-function page() {
-  const products = [
-    {
-      id: 1,
-      badge: 'Best Seller',
-      badgeColor: 'badge-error',
-      name: "Nike Air Force 1 Mid '07",
-      category: "Men's Shoes",
-      colors: '6 Colour',
-      price: '$98.30',
-      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&q=80'
-    },
-    {
-      id: 2,
-      badge: 'Extra 20% off',
-      badgeColor: 'badge-success',
-      name: "Nike Court Vision Low Next Nature",
-      category: "Men's Shoes",
-      colors: '4 Colour',
-      price: '$98.30',
-      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&q=80'
-    },
-    {
-      id: 3,
-      badge: 'Sustainable Materials',
-      badgeColor: 'badge-accent',
-      name: "Nike Air Force 1 PLATFORM",
-      category: "Men's Shoes",
-      colors: '1 Colour',
-      price: '$98.30',
-   image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&q=80'
-    },
-    {
-      id: 3,
-      badge: 'Sustainable Materials',
-      badgeColor: 'badge-accent',
-      name: "Nike Air Force 1 PLATFORM",
-      category: "Men's Shoes",
-      colors: '1 Colour',
-      price: '$98.30',
-      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&q=80'
-    },
-    {
-      id: 3,
-      badge: 'Sustainable Materials',
-      badgeColor: 'badge-accent',
-      name: "Nike Air Force 1 PLATFORM",
-      category: "Men's Shoes",
-      colors: '1 Colour',
-      price: '$98.30',
-      image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&q=80'
-    }
-  ]
+export default function Page() {
+
+  const [products,setProducts] = useState([])
+  const [loading, setLoading] = useState(true) 
+  async function fetchProducts() {
+    try{
+        const raw = await getProducts()
+        setProducts({ success: true, data: raw.data });
+        setLoading(false)
+    }catch(err){
+        setProducts({ success: false, message: err.message });
+        setLoading(false)
+    }   
+  }
+
+  useEffect(()=>{
+    fetchProducts()
+  },[])
+
+  if (products.success === false) {
+    return (
+      <div className="w-full h-[70vh] flex flex-col items-center justify-center gap-4">
+        <div className="text-5xl">😕</div>
+        <h2 className="text-xl font-semibold text-gray-700">Failed to load products</h2>
+        <p className="text-gray-500">{products.message}</p>
+        <button className="btn btn-outline" onClick={() => fetchProducts()}>
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="bg-white px-8 py-10 flex flex-col lg:flex-row max-h-screen overflow-auto">
-      <main className='flex flex-row'>
+    <div className="flex pt-18">
+      <div className="w-64 bg-white fixed left-0 top-18 h-screen overflow-y-auto">
         <FilterSidebar />
+      </div>
 
-        {/* Product Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {products.map(product => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </main>
+      <div className="flex-1 p-8 bg-white ml-64">
+        {loading ? (
+          <div className="w-full h-[70vh] flex items-center justify-center">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {products.success === true &&
+              products.data.map((item, i) => (
+                <div
+                  key={i}
+                  className="card bg-white shadow-sm hover:shadow-2xl transition border rounded-xl cursor-pointer"
+                >
+                  <figure className="px-4 pt-4">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="rounded-xl h-48 object-contain"
+                    />
+                  </figure>
+
+                  <div className="card-body">
+                    <div className="flex flex-row justify-between items-start">
+                      <h2 className="font-semibold text-lg mr-3">
+                        {item.name.length > 20
+                          ? item.name.substring(0, 45) + "..."
+                          : item.name}
+                      </h2>
+                      <p className="font-semibold text-lg text-right whitespace-nowrap">$ {item.price}</p>
+                    </div>
+
+                    <p className="text-sm text-gray-500">{item.mainCategory}</p>
+                  </div>
+                </div>
+              ))}
+          </div>
+        )}
+      </div>
     </div>
-  )
+  );
 }
-
-export default page

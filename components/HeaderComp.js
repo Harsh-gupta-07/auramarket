@@ -16,7 +16,7 @@ function Header() {
   }, []);
 
   return (
-    <div className="navbar bg-white shadow-md px-6">
+    <div className="navbar bg-white shadow-md px-6 fixed top-0 left-0 w-full z-50">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -87,14 +87,14 @@ function Header() {
             <FaSearch className="text-lg" />
           </button>
         )}
-        <button className="btn btn-ghost btn-circle">
+        <Link href="/cart" className="btn btn-ghost btn-circle">
           <div className="indicator">
             <FaShoppingCart className="text-lg" />
             <span className="badge badge-xs indicator-item bg-red-500 text-white">
               3
             </span>
           </div>
-        </button>
+        </Link>
         {userToken ? (
           <div className="dropdown dropdown-end">
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle hover:bg-white hover:border-none hover:shadow-none active:bg-white">

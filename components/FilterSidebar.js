@@ -1,164 +1,173 @@
 "use client"
-import React, { useState } from 'react';
-import Image from 'next/image';
 
+import { distinctCategories } from "@/utills/sidebarFunctions";
+import { useEffect, useState } from "react";
 
 export default function FilterSidebar() {
-  const [openSections, setOpenSections] = useState({
-    gender: true,
-    kids: true,
-    price: true,
-    height: false,
-    sports: true
-  });
+  const [loading, setLoading]=useState(true)
+  const [categories, setCategories] = useState([])
+  async function fetch_cat(params) {
+    try{
+      const data = await distinctCategories()
+      setCategories(data)
+      console.log(data)
+      setLoading(false)
+    }catch(err){
+      setCategories({sucess:false, message:err.message})
+      console.log(err)
+      setLoading(false)
+    }
+  }
 
-  const toggleSection = (section) => {
-    setOpenSections(prev => ({
-      ...prev,
-      [section]: !prev[section]
-    }));
-  };
+  useEffect(()=>{
+    fetch_cat()
+  },[])
 
   return (
-    <div className="w-80 bg-white p-6 min-h-screen">
+    <div className="w-64 p-6  bg-white min-h-screen">
+      {/* COLLAPSIBLE SECTIONS */}
+      {/* Categories */}
+      <div className="collapse bg-white">
+        <input type="checkbox" />
+        <div className="collapse-title p-0">
+          <div className="flex justify-between items-center font-semibold">
+            <span>Categories</span>
+            <svg className="w-4 h-4 transition-transform collapse-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
 
-      {/* Gender Section */}
-      <div className="mb-6">
-        <button 
-          onClick={() => toggleSection('gender')}
-          className="flex justify-between items-center w-full font-semibold text-lg mb-4"
-        >
-          Price
-          {openSections.gender ? <Image src="/ChevronUp.svg" alt='arrow-up' width={20} height={20}/> : <Image src="/ChevronDown.svg" alt='arrow-up' width={20} height={20}/>}
-        </button>
-        
-        {openSections.gender && (
-          <div className="space-y-3">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>&#60;$100</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>&#60;$250</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>&#60;$500</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>
-                greater than $500</span>
-            </label>
-            <div>
-              
+        <div className="collapse-content">
+          {loading ? (
+            <div className="w-full flex justify-center py-2">
+              <span className="loading loading-spinner loading-sm"></span>
             </div>
-          </div>
-        )}
+          ) : categories?.categories?.length ? (
+            categories.categories.map((cat) => (
+              <label key={cat} className="flex items-center gap-2 py-1 text-xs">
+                <input type="checkbox" className="checkbox checkbox-xs checkbox-neutral" /> {cat}
+              </label>
+            ))
+          ) : (
+            <p className="text-xs text-red-500">No categories found</p>
+          )}
+        </div>
       </div>
 
-      <div className="divider my-6"></div>
+      <div className="divider divider-neutral"></div>
 
-      {/* Kids Section */}
-      <div className="mb-6">
-        <button 
-          onClick={() => toggleSection('kids')}
-          className="flex justify-between items-center w-full font-semibold text-lg mb-4"
-        >
-          Kids
-          {openSections.kids ? <Image src="/ChevronUp.svg" alt='arrow-up' width={20} height={20}/> : <Image src="/ChevronDown.svg" alt='arrow-up' width={20} height={20}/>}
-        </button>
-        
-        {openSections.kids && (
-          <div className="space-y-3">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>Boys</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>Girls</span>
-            </label>
+      {/* Gender */}
+      <div className="collapse bg-white">
+        <input type="checkbox" />
+        <div className="collapse-title p-0">
+          <div className="flex justify-between items-center font-semibold">
+            <span>Gender</span>
+            <svg className="w-4 h-4 transition-transform collapse-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
-        )}
+        </div>
+        <div className="collapse-content">
+          <label className="flex items-center gap-2 py-1">
+            <input type="checkbox" className="checkbox checkbox-neutral checkbox-sm" /> Men
+          </label>
+          <label className="flex items-center gap-2 py-1">
+            <input type="checkbox" className="checkbox checkbox-sm" /> Women
+          </label>
+          <label className="flex items-center gap-2 py-1">
+            <input type="checkbox" className="checkbox checkbox-sm" /> Unisex
+          </label>
+        </div>
       </div>
 
-      <div className="divider my-6"></div>
+      <div className="divider divider-neutral "></div>
 
-      {/* Shop By Price Section */}
-      <div className="mb-6">
-        <button 
-          onClick={() => toggleSection('price')}
-          className="flex justify-between items-center w-full font-semibold text-lg mb-4"
-        >
-          Shop By Price
-          {openSections.price ? <Image src="/ChevronUp.svg" alt='arrow-up' width={20} height={20}/> : <Image src="/ChevronDown.svg" alt='arrow-up' width={20} height={20}/>}
-        </button>
-        
-        {openSections.price && (
-          <div className="space-y-3">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>$25 - $50</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>$50 - $100</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>$100 - $150</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>Over $150</span>
-            </label>
+      {/* Kids */}
+      <div className="collapse bg-white">
+        <input type="checkbox" />
+        <div className="collapse-title p-0">
+          <div className="flex justify-between items-center font-semibold">
+            <span>Kids</span>
+            <svg className="w-4 h-4 transition-transform collapse-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
-        )}
+        </div>
+        <div className="collapse-content">
+          <label className="flex items-center gap-2 py-1">
+            <input type="checkbox" className="checkbox checkbox-sm" /> Boys
+          </label>
+          <label className="flex items-center gap-2 py-1">
+            <input type="checkbox" className="checkbox checkbox-sm" /> Girls
+          </label>
+        </div>
       </div>
 
-      <div className="divider my-6"></div>
+      <div className="divider divider-neutral"></div>
 
-      {/* Shoe Height Section */}
-      <div className="mb-6">
-        <button 
-          onClick={() => toggleSection('height')}
-          className="flex justify-between items-center w-full font-semibold text-lg mb-4"
-        >
-          Shoe Height
-          {openSections.height ? <Image src="/ChevronUp.svg" alt='arrow-up' width={20} height={20}/> : <Image src="/ChevronDown.svg" alt='arrow-up' width={20} height={20}/>}
-        </button>
+      {/* Price */}
+      <div className="collapse bg-white">
+        <input type="checkbox" />
+        <div className="collapse-title p-0">
+          <div className="flex justify-between items-center font-semibold">
+            <span>Shop By Price</span>
+            <svg className="w-4 h-4 transition-transform collapse-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+        <div className="collapse-content">
+          {["$25 - $50", "$50 - $100", "$100 - $150", "Over $150"].map((label) => (
+            <label key={label} className="flex items-center gap-2 py-1">
+              <input type="checkbox" className="checkbox checkbox-sm" /> {label}
+            </label>
+          ))}
+        </div>
       </div>
 
-      <div className="divider my-6"></div>
+      <div className="divider divider-neutral"></div>
 
-      {/* Sports Section */}
-      <div className="mb-6">
-        <button 
-          onClick={() => toggleSection('sports')}
-          className="flex justify-between items-center w-full font-semibold text-lg mb-4"
-        >
-          Sports
-          {openSections.sports ? <Image src="/ChevronUp.svg" alt='arrow-up' width={20} height={20}/> : <Image src="/ChevronDown.svg" alt='arrow-up' width={20} height={20}/>}
-        </button>
-        
-        {openSections.sports && (
-          <div className="space-y-3">
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>Lifestyle</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>Skateboarding</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer">
-              <input type="checkbox" className="checkbox checkbox-sm checkbox-neutral" />
-              <span>Dance</span>
-            </label>
+      {/* Shoe Height */}
+      <div className="collapse bg-white">
+        <input type="checkbox" />
+        <div className="collapse-title p-0">
+          <div className="flex justify-between items-center font-semibold">
+            <span>Shoe Height</span>
+            <svg className="w-4 h-4 transition-transform collapse-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
           </div>
-        )}
+        </div>
+        <div className="collapse-content">
+          {["Low", "Mid", "High"].map((label) => (
+            <label key={label} className="flex items-center gap-2 py-1">
+              <input type="checkbox" className="checkbox checkbox-sm" /> {label}
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="divider divider-neutral"></div>
+
+      {/* Sports */}
+      <div className="collapse bg-white">
+        <input type="checkbox" />
+        <div className="collapse-title p-0">
+          <div className="flex justify-between items-center font-semibold">
+            <span>Sports</span>
+            <svg className="w-4 h-4 transition-transform collapse-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
+        <div className="collapse-content">
+          {["Lifestyle", "Skateboarding", "Dance"].map((label) => (
+            <label key={label} className="flex items-center gap-2 py-1">
+              <input type="checkbox" className="checkbox checkbox-sm" /> {label}
+            </label>
+          ))}
+        </div>
       </div>
     </div>
   );
