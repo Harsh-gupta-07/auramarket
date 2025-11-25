@@ -20,7 +20,7 @@ export default function SmallFooter() {
                 d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3zm0 0c-4.418 0-8 2.239-8 5v1h16v-1c0-2.761-3.582-5-8-5z"
               />
             </svg>
-            Croatia
+            India
           </span>
 
           <span className="opacity-70">© 2025 AuraMarket, Inc. All Rights Reserved</span>

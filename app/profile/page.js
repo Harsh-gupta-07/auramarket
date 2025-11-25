@@ -4,9 +4,12 @@ import MyOrders from "@/components/myOrders";
 import Favourites from "@/components/Favourites";
 import Image from "next/image";
 import UserDetails from "@/components/UserDetails";
-
+import Address from "@/components/Address";
+import { useSearchParams } from 'next/navigation';
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState("My Orders");
+  const searchParams = useSearchParams();
+  const currentTab = searchParams.get('tab') || 'My Orders';
+  const [activeTab, setActiveTab] = useState(currentTab);
 
   const user = {
     name: "Ronald O. Williams",
@@ -18,12 +21,8 @@ export default function ProfilePage() {
     "My Orders",
     "Favorites",
     "My Details",
-    "Payment Methods",
     "Address Book",
   ];
-
-
-
 
 
   return (
@@ -75,11 +74,10 @@ export default function ProfilePage() {
         )}
         
         {/* Placeholders for other tabs */}
-        {[ "Payment Methods", "Address Book"].includes(activeTab) && (
-            <div className="flex flex-col items-center justify-center h-64 text-gray-400">
-                <p>Content for {activeTab} is not implemented yet.</p>
-            </div>
+        {activeTab === "Address Book" && (
+          <Address />
         )}
+
       </div>
     </div>
   );
