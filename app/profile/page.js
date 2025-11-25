@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import MyOrders from "@/components/myOrders";
 import Favourites from "@/components/Favourites";
 import Image from "next/image";
@@ -7,6 +7,14 @@ import UserDetails from "@/components/UserDetails";
 import Address from "@/components/Address";
 import { useSearchParams } from 'next/navigation';
 export default function ProfilePage() {
+  return (
+    <Suspense fallback={<div className="p-6">Loading profile...</div>}>
+      <ProfilePageContent />
+    </Suspense>
+  );
+}
+
+function ProfilePageContent() {
   const searchParams = useSearchParams();
   const currentTab = searchParams.get('tab') || 'My Orders';
   const [activeTab, setActiveTab] = useState(currentTab);

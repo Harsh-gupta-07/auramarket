@@ -1,71 +1,188 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-
-const PRODUCT_DATA = {
-  "nike-air-max-90-se": {
-    name: "Nike Air Max 90 SE",
-    category: "Women's Shoes",
-    price: "$140",
-    colorway: "Dark Team Red/Pure Platinum/Pink Oxford",
-    style: "HM9451-600",
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&w=1600&q=80",
-    highlights: [
-      "Padded collar",
-      "Foam midsole",
-      "Visible Max Air unit for lightweight cushioning",
-      "Classic waffle outsole for traction",
-    ],
-    shipping: [
-      "Free standard shipping and free 60-day returns for Nike Members.",
-      "Choose expedited shipping at checkout for faster delivery.",
-    ],
-    reviews: {
-      average: 3.6,
-      total: 10,
-    },
-  },
-};
+import { fetchProduct } from "@/utills/getSpecifyProduct";
 
 function ProductPage() {
   const params = useParams();
   const idParam = Array.isArray(params?.id) ? params.id[0] : params?.id;
+  const [product, setProduct] = useState(null);
+  const [status, setStatus] = useState({ loading: true, error: "" });
+  const [openSection, setOpenSection] = useState("description");
 
-  const product = useMemo(() => {
-    return PRODUCT_DATA[idParam?.toLowerCase?.()] ?? PRODUCT_DATA["nike-air-max-90-se"];
+  useEffect(() => {
+    async function loadProduct() {
+      setStatus({ loading: true, error: "" });
+      try {
+        const raw = await fetchProduct(idParam);
+        if (raw?.success && raw?.product) {
+          setProduct(raw.product);
+          setStatus({ loading: false, error: "" });
+        } else {
+          setProduct(null);
+          setStatus({
+            loading: false,
+            error: raw?.message || "Product information unavailable.",
+          });
+        }
+      } catch (err) {
+        setProduct(null);
+        setStatus({
+          loading: false,
+          error: err.message || "Unable to load product.",
+        });
+      }
+    }
+
+    if (idParam) {
+      loadProduct();
+    } else {
+      setStatus({ loading: false, error: "Invalid product id." });
+    }
   }, [idParam]);
 
-  const [openSection, setOpenSection] = useState("details");
-  const rating = product.reviews.average;
-  const ratingInputName = `rating-readonly-${product.style ?? "default"}`;
+  const rating = product?.averageRating ?? 0;
+  const ratingInputName = useMemo(
+    () => `rating-${product?.id ?? "unknown"}`,
+    [product?.id]
+  );
+
+  const primaryImage = product?.images?.[0]?.hiRes;
+  const formattedPrice =
+    typeof product?.price === "number"
+      ? `$${product.price.toFixed(2)}`
+      : product?.price ?? "--";
+
+  const accordionSections = [
+    {
+      key: "description",
+      label: "Description",
+      render: () =>
+        product?.description?.length ? (
+          <ul className="list-disc space-y-1 pl-5">
+            {product.description.map((item, index) => (
+              <li key={`${item}-${index}`}>{item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No description available.</p>
+        ),
+    },
+    {
+      key: "features",
+      label: "Key Features",
+      render: () =>
+        product?.features?.length ? (
+          <ul className="list-disc space-y-1 pl-5">
+            {product.features.map((item, index) => (
+              <li key={`${item}-${index}`}>{item}</li>
+            ))}
+          </ul>
+        ) : (
+          <p>No feature list available.</p>
+        ),
+    },
+    {
+      key: "specifications",
+      label: "Specifications",
+      render: () =>
+        product?.details?.data ? (
+          <dl className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
+            {Object.entries(product.details.data).map(([label, value]) => {
+              if (typeof value === "object" && value !== null) {
+                return Object.entries(value).map(([subLabel, subValue]) => (
+                  <div key={`${label}-${subLabel}`}>
+                    <dt className="font-semibold text-neutral-800">
+                      {label} - {subLabel}
+                    </dt>
+                    <dd className="text-neutral-600">{subValue}</dd>
+                  </div>
+                ));
+              }
+              return (
+                <div key={label}>
+                  <dt className="font-semibold text-neutral-800">{label}</dt>
+                  <dd className="text-neutral-600">{value}</dd>
+                </div>
+              );
+            })}
+          </dl>
+        ) : (
+          <p>No specifications listed.</p>
+        ),
+    },
+  ];
+
+  if (status.loading) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-white text-[#161616]">
+        <p className="text-lg font-semibold">Loading product...</p>
+      </main>
+    );
+  }
+
+  if (status.error) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-white text-[#161616]">
+        <p className="text-lg font-semibold text-red-600">{status.error}</p>
+      </main>
+    );
+  }
+
+  if (!product) {
+    return null;
+  }
 
   return (
     <main className="min-h-screen bg-white px-4 py-10 text-[#161616] pt-22 md:px-10">
       <div className="mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row">
         <section className="flex flex-1 justify-center self-start rounded-[32px] bg-white p-6 lg:sticky lg:top-10">
           <img
-            src={product.image}
-            alt={product.name}
+            src={primaryImage}
+            alt={product.title}
             className="h-[420px] w-[420px] max-w-full object-contain"
           />
         </section>
 
         {/* Details column */}
         <section className="flex w-full max-w-xl flex-col gap-6">
-          <div className="flex items-center gap-2 text-sm font-semibold">
-            <span className="inline-flex items-center gap-1 rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide">
-              <span className="text-yellow-500">★</span> Highly Rated
+          <div className="flex flex-col gap-2 text-sm font-semibold">
+            <span className="inline-flex items-center gap-1 self-start rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+              <span className="text-yellow-500">★</span> Verified Listing
             </span>
-            <span className="text-neutral-500">{product.category}</span>
+            <span className="text-neutral-500">{product.mainCategory}</span>
           </div>
 
           <div>
-            <h1 className="text-3xl font-semibold">{product.name}</h1>
-            <p className="mt-2 text-2xl">{product.price}</p>
+            <h1 className="text-3xl font-semibold">{product.title}</h1>
+            <p className="mt-2 text-2xl">{formattedPrice}</p>
           </div>
 
+          <div className="flex items-center gap-4 rounded-3xl bg-neutral-50 p-4">
+            <div className="rating rating-lg rating-half">
+              {Array.from({ length: 10 }).map((_, index) => (
+                <input
+                  key={index}
+                  type="radio"
+                  name={ratingInputName}
+                  className={`mask mask-star-2 bg-yellow-400 ${
+                    index % 2 === 0 ? "mask-half-1" : "mask-half-2"
+                  }`}
+                  checked={Math.round(rating * 2) === index + 1}
+                  readOnly
+                />
+              ))}
+            </div>
+            <div>
+              <p className="text-lg font-semibold">
+                {rating.toFixed(1)} / 5.0
+              </p>
+              <p className="text-sm text-neutral-500">
+                {product.ratingNumber ?? 0} ratings
+              </p>
+            </div>
+          </div>
 
           <div className="flex flex-col gap-3 md:flex-row">
             <button className=" cursor-pointer flex-1 rounded-full bg-black py-4 text-center text-lg font-semibold text-white transition hover:-translate-y-0.5 hover:bg-neutral-900">
@@ -77,74 +194,24 @@ function ProductPage() {
           </div>
 
           <div className="space-y-3 rounded-3xl bg-white p-6">
-            {["details", "shipping", "reviews"].map((section) => {
-              const isOpen = openSection === section;
-              const labelMap = {
-                details: "Product Details",
-                shipping: "Shipping & Returns",
-                reviews: `Reviews (${product.reviews.total})`,
-              };
+            {accordionSections.map(({ key, label, render }) => {
+              const isOpen = openSection === key;
               return (
-                <div key={section} className="border-b last:border-none">
+                <div key={key} className="border-b last:border-none">
                   <button
                     className="flex w-full items-center justify-between py-4 text-left text-base font-semibold"
                     onClick={() =>
                       setOpenSection((prev) =>
-                        prev === section ? "" : section
+                        prev === key ? "" : key
                       )
                     }
                   >
-                    {labelMap[section]}
-                    <span className="text-xl">
-                      {isOpen ? "−" : "+"}
-                    </span>
+                    {label}
+                    <span className="text-xl">{isOpen ? "−" : "+"}</span>
                   </button>
                   {isOpen && (
                     <div className="pb-5 text-sm font-medium text-neutral-600">
-                      {section === "details" && (
-                        <ul className="list-disc space-y-1 pl-5">
-                          {product.highlights.map((item) => (
-                            <li key={item}>{item}</li>
-                          ))}
-                          <li>Shown: {product.colorway}</li>
-                          <li>Style: {product.style}</li>
-                        </ul>
-                      )}
-                      {section === "shipping" && (
-                        <ul className="list-disc space-y-1 pl-5">
-                          {product.shipping.map((item) => (
-                            <li key={item}>{item}</li>
-                          ))}
-                        </ul>
-                      )}
-                      {section === "reviews" && (
-                        <div className="space-y-2">
-                          <div className="flex items-center gap-3">
-                            <div className="rating rating-lg rating-half">
-                              {Array.from({ length: 10 }).map((_, index) => (
-                                <input
-                                  key={index}
-                                  type="radio"
-                                  name={ratingInputName}
-                                  className={`mask mask-star-2 bg-yellow-400 ${
-                                    index % 2 === 0
-                                      ? "mask-half-1"
-                                      : "mask-half-2"
-                                  }`}
-                                  checked={Math.round(rating * 2) === index + 1}
-                                  readOnly
-                                />
-                              ))}
-                            </div>
-                            <p className="text-lg font-semibold">
-                              {rating.toFixed(1)}
-                            </p>
-                          </div>
-                          <p className="text-sm text-neutral-500">
-                            Based on {product.reviews.total} reviews
-                          </p>
-                        </div>
-                      )}
+                      {render()}
                     </div>
                   )}
                 </div>
