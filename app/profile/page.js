@@ -1,11 +1,13 @@
 "use client";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import MyOrders from "@/components/myOrders";
 import Favourites from "@/components/Favourites";
 import Image from "next/image";
 import UserDetails from "@/components/UserDetails";
 import Address from "@/components/Address";
 import { useSearchParams } from 'next/navigation';
+import { getOrders, userInfo } from "@/utills/userInfo";
+import Link from "next/link";
 export default function ProfilePage() {
   return (
     <Suspense fallback={<div className="p-6">Loading profile...</div>}>
@@ -18,12 +20,66 @@ function ProfilePageContent() {
   const searchParams = useSearchParams();
   const currentTab = searchParams.get('tab') || 'My Orders';
   const [activeTab, setActiveTab] = useState(currentTab);
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [needsLogin, setNeedsLogin] = useState(false);
+  
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchUser() {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const data = await userInfo();
+        const orders= await getOrders()
+        if (!isMounted) return;
+        if (data?.login === false) {
+          setNeedsLogin(true);
+          setUser(null);
+          return;
+        }
+        if (data?.success && data?.user) {
+          setUser(data.user);
+          setNeedsLogin(false);
+        } else {
+          setError(data?.message || "Could not fetch your profile details.");
+        }
+      } catch (err) {
+        if (!isMounted) return;
+        setError(err?.message || "Something went wrong while loading your profile.");
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    }
+    fetchUser();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
-  const user = {
-    name: "Ronald O. Williams",
-    email: "ronald@mail.com",
-    avatar: "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp", // Placeholder
-  };
+  if (isLoading) {
+    return <div className="p-6 text-center pt-22">Loading your profile...</div>;
+  }
+
+  if (error && !needsLogin) {
+    return (
+      <div className="p-6 text-center text-red-500 flex flex-col items-center justify-center min-h-[60vh]">
+        <p className="text-lg font-semibold">{error}</p>
+        <p className="text-sm text-gray-500 mt-2">Please try refreshing the page.</p>
+      </div>
+    );
+  }
+
+  if (!user || needsLogin) {
+    return (
+      <div className="p-6 text-center pt-22">
+        <h2 className="text-xl font-semibold mb-2">Please log in</h2>
+        <p className="text-gray-600">You need to be signed in to view your profile.</p>
+        <Link href="/signin" className="btn btn-neutral mt-4">Sign In</Link>
+      </div>
+    );
+  }
 
   const tabs = [
     "My Orders",
@@ -31,7 +87,6 @@ function ProfilePageContent() {
     "My Details",
     "Address Book",
   ];
-
 
   return (
     <div className="container mx-auto p-6 max-w-5xl pt-22">
@@ -78,7 +133,7 @@ function ProfilePageContent() {
         )}
 
         {activeTab === "My Details" && (
-          <UserDetails />
+          <UserDetails user={user}/>
         )}
         
         {/* Placeholders for other tabs */}
