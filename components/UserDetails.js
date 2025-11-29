@@ -1,23 +1,32 @@
 import React, { useState } from "react";
+import { updateProfile } from "../utills/user";
 
-const fallbackUser = {
-  name: "Ronald O. Williams",
-  email: "ronald@mail.com",
-};
 
-export default function UserDetails({ user = fallbackUser }) {
+
+export default function UserDetails({ user }) {
   const [formData, setFormData] = useState(user);
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (field) => (event) => {
     setFormData((prev) => ({ ...prev, [field]: event.target.value }));
     setStatus("");
   };
 
-  const handleSave = () => {
-    setEditing(false);
-    setStatus("Changes saved locally. We'll sync them soon.");
+  const handleSave = async () => {
+
+    setLoading(true);
+    const res = await updateProfile(formData);
+    setLoading(false);
+    if (res.success) {
+      setEditing(false);
+      setStatus("Profile updated successfully.");
+    } else {
+      setLoading(false);
+      // setEditing(true);
+      setStatus(res.message || "Failed to update profile.");
+    }
   };
 
   const handleCancel = () => {
@@ -72,8 +81,9 @@ export default function UserDetails({ user = fallbackUser }) {
               <button
                 className="btn btn-neutral rounded-full px-6"
                 onClick={handleSave}
+                disabled={loading}
               >
-                Save changes
+                {loading ? <span className="loading loading-spinner loading-lg"></span> : "Save changes"}
               </button>
               <button
                 className="btn btn-ghost rounded-full px-6"

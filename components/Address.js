@@ -1,58 +1,57 @@
- "use client";
+"use client";
 import React, { useMemo, useState } from "react";
 import AddressModal from "./AddressModal";
-const fallbackAddresses = [
-  {
-    id: "home",
-    label: "Home",
-    name: "Ronald O. Williams",
-    addressLine: "4935 Michigan Avenue",
-    cityLine: "Detroit, MI 48226",
-    phone: "+1 313-555-0119",
-    instructions: "Leave parcels with the concierge if I’m not home.",
-    isPrimary: true,
-  },
-  {
-    id: "studio",
-    label: "Studio",
-    name: "Ronald O. Williams",
-    addressLine: "224 Grand River Ave, Floor 4",
-    cityLine: "Detroit, MI 48226",
-    phone: "+1 313-555-0199",
-    instructions: "Freight elevator is on the alley—call when outside.",
-    isPrimary: false,
-  },
-];
+import { changeDefaultAddress, addAddress, removeAddress, editAddress } from "../utills/user";
 
-export default function Address({ addresses = fallbackAddresses }) {
+
+export default function Address({ addresses }) {
+  // console.log(addresses)
   const [items, setItems] = useState(addresses);
-  const primaryId = useMemo(
-    () => items.find((entry) => entry.isPrimary)?.id ?? items[0]?.id,
-    [items]
-  );
   const [status, setStatus] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const initialDraft = {
     label: "",
     name: "",
     addressLine: "",
-    cityLine: "",
+    city: "",
+    state: "",
+    pincode: "",
     phone: "",
     instructions: "",
     isPrimary: false,
   };
   const [draft, setDraft] = useState(initialDraft);
 
-  const handleSetPrimary = (id) => {
-    setItems((prev) =>
-      prev.map((entry) => ({ ...entry, isPrimary: entry.id === id }))
-    );
-    setStatus("Primary address updated.");
+  const handleSetPrimary = async (id) => {
+    setLoading(true);
+    const res = await changeDefaultAddress(id);
+    setLoading(false);
+    if (res.success) {
+      setItems((prev) =>
+        prev.map((entry) => ({ ...entry, isPrimary: entry.id === id }))
+      );
+      setStatus("Primary address updated.");
+    } else {
+      setStatus(res.message || "Failed to update primary address.");
+    }
   };
 
-  const handleDelete = (id) => {
-    setItems((prev) => prev.filter((entry) => entry.id !== id));
-    setStatus("Address removed from your book.");
+  const handleDelete = async (id) => {
+    setLoading(true);
+    const res = await removeAddress(id);
+    setLoading(false);
+    if (res.success) {
+      setItems((prev) => prev.filter((entry) => entry.id !== id));
+      setStatus("Address removed from your book.");
+    } else {
+      setStatus(res.message || "Failed to remove address.");
+    }
+  };
+
+  const handleEdit = (address) => {
+    setDraft(address);
+    setModalOpen(true);
   };
 
   const handleDraftChange = (field) => (event) => {
@@ -61,24 +60,33 @@ export default function Address({ addresses = fallbackAddresses }) {
     setDraft((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleDraftSubmit = (event) => {
+  const handleDraftSubmit = async (event) => {
     event.preventDefault();
-    if (!draft.name.trim() || !draft.addressLine.trim()) {
-      setStatus("Name and street address are required.");
-      return;
+    setLoading(true);
+    let res;
+    if (draft.id) {
+      res = await editAddress(draft);
+    } else {
+      res = await addAddress(draft);
     }
-    const entry = {
-      ...draft,
-      id: `addr-${Date.now()}`,
-    };
-    setItems((prev) =>
-      draft.isPrimary
-        ? [{ ...entry, isPrimary: true }, ...prev.map((item) => ({ ...item, isPrimary: false }))]
-        : [entry, ...prev]
-    );
-    setStatus("New address saved.");
-    setDraft(initialDraft);
-    setModalOpen(false);
+    console.log(res)
+    setLoading(false);
+
+    if (res.success === false) {
+      setStatus(res.message || "Failed to save address.");
+    } else {
+      const savedAddress = res.address || res;
+      setItems((prev) => {
+        if (draft.id) {
+          return prev.map((item) => (item.id === savedAddress.id ? savedAddress : item));
+        } else {
+          return [...prev, savedAddress];
+        }
+      });
+      setModalOpen(false);
+      setDraft(initialDraft);
+      setStatus(draft.id ? "Address updated successfully." : "New address added successfully.");
+    }
   };
 
   const handleModalClose = () => {
@@ -117,15 +125,21 @@ export default function Address({ addresses = fallbackAddresses }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {items.map((address) => (
-            <AddressCard
-              key={address.id}
-              address={address}
-              isPrimary={address.id === primaryId}
-              onSetPrimary={handleSetPrimary}
-              onDelete={handleDelete}
-            />
-          ))}
+          {loading ? (
+            <div className="flex items-center justify-center h-24">
+              <span className="loading loading-spinner" />
+            </div>
+          ) : (
+            items.map((address) => (
+              <AddressCard
+                key={address.id}
+                address={address}
+                isPrimary={address.isPrimary}
+                onSetPrimary={handleSetPrimary}
+                onDelete={handleDelete}
+                onEdit={handleEdit}
+              />
+            )))}
           {!items.length && (
             <EmptyState onAdd={() => setModalOpen(true)} />
           )}
@@ -138,13 +152,14 @@ export default function Address({ addresses = fallbackAddresses }) {
           onChange={handleDraftChange}
           onClose={handleModalClose}
           onSubmit={handleDraftSubmit}
+          loading={loading}
         />
       )}
     </section>
   );
 }
 
-function AddressCard({ address, isPrimary, onSetPrimary, onDelete }) {
+function AddressCard({ address, isPrimary, onSetPrimary, onDelete, onEdit }) {
   return (
     <article className="relative p-6 rounded-2xl border border-gray-100 bg-gray-50/40 hover:border-gray-300 transition-all">
       <div className="flex items-center justify-between gap-4 mb-4">
@@ -159,7 +174,7 @@ function AddressCard({ address, isPrimary, onSetPrimary, onDelete }) {
           <button
             type="button"
             onClick={() => onSetPrimary(address.id)}
-            className="text-xs font-semibold text-gray-500 hover:text-gray-900 underline underline-offset-4"
+            className="text-xs font-semibold text-gray-500 hover:text-gray-900 underline underline-offset-4 cursor-pointer"
           >
             Make default
           </button>
@@ -169,12 +184,12 @@ function AddressCard({ address, isPrimary, onSetPrimary, onDelete }) {
       <div className="space-y-1 text-sm text-gray-700">
         <p className="text-lg font-semibold text-gray-900">{address.name}</p>
         <p>{address.addressLine}</p>
-        <p>{address.cityLine}</p>
+        <p>{address.city}, {address.state} {address.pincode}</p>
         <p className="text-gray-500">{address.phone}</p>
       </div>
 
       {address.instructions && (
-        <p className="mt-4 text-xs text-gray-500 bg-white/80 rounded-xl px-3 py-2 border border-gray-100">
+        <p className="mt-4 text-xs text-gray-500 bg-white/80 rounded-xl px-3 py-2 border border-gray-100 break-words">
           {address.instructions}
         </p>
       )}
@@ -182,13 +197,14 @@ function AddressCard({ address, isPrimary, onSetPrimary, onDelete }) {
       <div className="mt-6 flex flex-wrap gap-3 text-sm font-semibold">
         <button
           type="button"
-          className="btn btn-sm btn-neutral rounded-full px-4"
+          className="btn btn-sm btn-neutral rounded-full px-4 cursor-pointer"
+          onClick={() => onEdit(address)}
         >
           Edit
         </button>
         <button
           type="button"
-          className="btn btn-sm btn-ghost rounded-full px-4 text-gray-500"
+          className="btn btn-sm btn-ghost rounded-full px-4 text-gray-500 cursor-pointer"
           onClick={() => onDelete(address.id)}
         >
           Remove

@@ -6,7 +6,7 @@ import Image from "next/image";
 import UserDetails from "@/components/UserDetails";
 import Address from "@/components/Address";
 import { useSearchParams } from 'next/navigation';
-import { getOrders, userInfo } from "@/utills/userInfo";
+import { userInfo } from "@/utills/user";
 import Link from "next/link";
 export default function ProfilePage() {
   return (
@@ -24,7 +24,7 @@ function ProfilePageContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [needsLogin, setNeedsLogin] = useState(false);
-  
+
   useEffect(() => {
     let isMounted = true;
     async function fetchUser() {
@@ -32,7 +32,8 @@ function ProfilePageContent() {
       setError(null);
       try {
         const data = await userInfo();
-        const orders= await getOrders()
+        // const orders= await getOrders()
+        // console.log(data.user.addresses)
         if (!isMounted) return;
         if (data?.login === false) {
           setNeedsLogin(true);
@@ -59,7 +60,9 @@ function ProfilePageContent() {
   }, []);
 
   if (isLoading) {
-    return <div className="p-6 text-center pt-22">Loading your profile...</div>;
+    return <div className="p-6 flex justify-center items-center pt-22">
+      <span className="loading loading-dots loading-xl" />
+    </div>;
   }
 
   if (error && !needsLogin) {
@@ -110,11 +113,10 @@ function ProfilePageContent() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`cursor-pointer pb-4 text-sm font-semibold transition-colors relative ${
-                activeTab === tab
-                  ? "text-black border-b-2 border-black"
-                  : "text-gray-500 hover:text-black"
-              }`}
+              className={`cursor-pointer pb-4 text-sm font-semibold transition-colors relative ${activeTab === tab
+                ? "text-black border-b-2 border-black"
+                : "text-gray-500 hover:text-black"
+                }`}
             >
               {tab}
             </button>
@@ -125,20 +127,20 @@ function ProfilePageContent() {
       {/* Content */}
       <div className="min-h-[400px]">
         {activeTab === "My Orders" && (
-          <MyOrders />
+          <MyOrders orders={user.orders} />
         )}
 
         {activeTab === "Favorites" && (
-          <Favourites />
+          <Favourites favorites={user.favorites} />
         )}
 
         {activeTab === "My Details" && (
-          <UserDetails user={user}/>
+          <UserDetails user={{ name: user.name, email: user.email, id: user.id }} />
         )}
-        
+
         {/* Placeholders for other tabs */}
         {activeTab === "Address Book" && (
-          <Address />
+          <Address addresses={user.addresses} />
         )}
 
       </div>
