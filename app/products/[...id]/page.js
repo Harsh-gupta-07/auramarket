@@ -3,6 +3,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { fetchProduct } from "@/utills/getSpecifyProduct";
+import {
+  addToFavourites,
+  removeFromFavourites,
+  checkFavouriteStatus,
+} from "@/utills/favourites";
+import { addToCart } from "@/utills/cart";
+import Image from "next/image";
 
 function ProductPage() {
   const params = useParams();
@@ -10,6 +17,10 @@ function ProductPage() {
   const [product, setProduct] = useState(null);
   const [status, setStatus] = useState({ loading: true, error: "" });
   const [openSection, setOpenSection] = useState("description");
+  const [isFavourite, setIsFavourite] = useState(false);
+  const [favLoading, setFavLoading] = useState(false);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [toast, setToast] = useState({ type: "", message: "" });
 
   useEffect(() => {
     async function loadProduct() {
@@ -42,6 +53,64 @@ function ProductPage() {
     }
   }, [idParam]);
 
+  useEffect(() => {
+    async function checkFav() {
+      if (product?.id) {
+        setFavLoading(true);
+        const res = await checkFavouriteStatus(product.id);
+        if (res.success) {
+          setIsFavourite(res.isFavourite);
+        }
+        setFavLoading(false);
+      }
+    }
+    if (product) {
+      checkFav();
+    }
+  }, [product]);
+
+  const showToast = (type, message) => {
+    setToast({ type, message });
+    setTimeout(() => setToast({ type: "", message: "" }), 3000);
+  };
+
+  const handleToggleFavourite = async () => {
+    if (!product?.id || favLoading) return;
+
+    setFavLoading(true);
+    if (isFavourite) {
+      const res = await removeFromFavourites(product.id);
+      if (res.success) {
+        setIsFavourite(false);
+        showToast("success", "Removed from favourites");
+      } else {
+        showToast("error", res.message);
+      }
+    } else {
+      const res = await addToFavourites(product.id);
+      if (res.success) {
+        setIsFavourite(true);
+        showToast("success", "Added to favourites");
+      } else {
+        showToast("error", res.message);
+      }
+    }
+    setFavLoading(false);
+  };
+
+  const handleAddToCart = async () => {
+    if (!product?.id || cartLoading) return;
+
+    setCartLoading(true);
+    const res = await addToCart(product.id, 1);
+    if (res.success) {
+      showToast("success", "Added to cart");
+    } else {
+      showToast("error", res.message);
+    }
+    setCartLoading(false);
+  };
+
   const rating = product?.averageRating ?? 0;
   const ratingInputName = useMemo(
     () => `rating-${product?.id ?? "unknown"}`,
@@ -59,7 +128,7 @@ function ProductPage() {
       key: "description",
       label: "Description",
       render: () =>
-        product?.description?.length ? (
+        product.description.length ? (
           <ul className="list-disc space-y-1 pl-5">
             {product.description.map((item, index) => (
               <li key={`${item}-${index}`}>{item}</li>
@@ -73,7 +142,7 @@ function ProductPage() {
       key: "features",
       label: "Key Features",
       render: () =>
-        product?.features?.length ? (
+        product.features.length ? (
           <ul className="list-disc space-y-1 pl-5">
             {product.features.map((item, index) => (
               <li key={`${item}-${index}`}>{item}</li>
@@ -87,7 +156,7 @@ function ProductPage() {
       key: "specifications",
       label: "Specifications",
       render: () =>
-        product?.details?.data ? (
+        product.details.data ? (
           <dl className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
             {Object.entries(product.details.data).map(([label, value]) => {
               if (typeof value === "object" && value !== null) {
@@ -135,7 +204,18 @@ function ProductPage() {
   }
 
   return (
-    <main className="min-h-screen bg-white px-4 py-10 text-[#161616] pt-22 md:px-10">
+    <main className="min-h-screen bg-white px-4 py-10 text-[#161616] pt-22 md:px-10 relative">
+      <div className="toast toast-top toast-end z-50">
+        {toast.message && (
+          <div
+            className={`alert ${toast.type === "error" ? "alert-error" : "alert-success"
+              } text-white`}
+          >
+            <span>{toast.message}</span>
+          </div>
+        )}
+      </div>
+
       <div className="mx-auto flex max-w-6xl flex-col gap-10 lg:flex-row">
         <section className="flex flex-1 justify-center self-start rounded-[32px] bg-white p-6 lg:sticky lg:top-10">
           <img
@@ -145,7 +225,6 @@ function ProductPage() {
           />
         </section>
 
-        {/* Details column */}
         <section className="flex w-full max-w-xl flex-col gap-6">
           <div className="flex flex-col gap-2 text-sm font-semibold">
             <span className="inline-flex items-center gap-1 self-start rounded-full border border-neutral-200 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-wide">
@@ -166,9 +245,8 @@ function ProductPage() {
                   key={index}
                   type="radio"
                   name={ratingInputName}
-                  className={`mask mask-star-2 bg-yellow-400 ${
-                    index % 2 === 0 ? "mask-half-1" : "mask-half-2"
-                  }`}
+                  className={`mask mask-star-2 bg-yellow-400 ${index % 2 === 0 ? "mask-half-1" : "mask-half-2"
+                    }`}
                   checked={Math.round(rating * 2) === index + 1}
                   readOnly
                 />
@@ -185,11 +263,33 @@ function ProductPage() {
           </div>
 
           <div className="flex flex-col gap-3 md:flex-row">
-            <button className=" cursor-pointer flex-1 rounded-full bg-black py-4 text-center text-lg font-semibold text-white transition hover:-translate-y-0.5 hover:bg-neutral-900">
-              Add to Bag
+            <button
+              onClick={handleAddToCart}
+              disabled={cartLoading}
+              className=" cursor-pointer flex-1 rounded-full bg-black py-4 text-center text-lg font-semibold text-white transition hover:-translate-y-0.5 hover:bg-neutral-900 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+              {cartLoading ? (
+                <span className="loading loading-spinner loading-md"></span>
+              ) : (
+                "Add to Bag"
+              )}
             </button>
-            <button className="cursor-pointer rounded-full border border-neutral-300 bg-white px-8 py-4 text-lg font-semibold transition hover:border-black">
-              ♡ Favorite
+            <button
+              onClick={handleToggleFavourite}
+              disabled={favLoading}
+              className={`disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer rounded-full border border-neutral-300 px-8 py-4 text-lg font-semibold transition hover:border-black flex items-center justify-center gap-2 
+                ${isFavourite
+                  ? "bg-red-50 text-red-600 border-red-200"
+                  : "bg-white"
+                }`}
+            >
+              {favLoading ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : isFavourite ? (
+                <Image src="/red-heart.svg" alt="" width={24} height={24} />
+              ) : (
+                <Image src="/black-heart.svg" alt="" width={24} height={24} />
+              )}
             </button>
           </div>
 
@@ -201,9 +301,7 @@ function ProductPage() {
                   <button
                     className="flex w-full items-center justify-between py-4 text-left text-base font-semibold"
                     onClick={() =>
-                      setOpenSection((prev) =>
-                        prev === key ? "" : key
-                      )
+                      setOpenSection((prev) => (prev === key ? "" : key))
                     }
                   >
                     {label}
@@ -225,3 +323,4 @@ function ProductPage() {
 }
 
 export default ProductPage;
+

@@ -1,4 +1,4 @@
-import { Geist_Mono,Montserrat } from "next/font/google";
+import { Geist_Mono, Montserrat } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/HeaderComp";
@@ -48,7 +48,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${zalandoSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased`}
+        className={`${zalandoSans.variable} ${geistMono.variable} ${montserrat.variable} antialiased bg-white`}
       >
         {children}
       </body>

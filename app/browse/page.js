@@ -16,16 +16,24 @@ export default function Page() {
 function BrowseContent() {
   const searchParams = useSearchParams();
   const page = searchParams.get('page') || 1;
+  const keyword = searchParams.get('keyword') || "";
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(Number(page));
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 15
+  const [filters, setFilters] = useState({
+    categories: [],
+    sort: "",
+    priceRange: { min: "", max: "" },
+    rating: [],
+    keyword: keyword
+  });
 
-  async function fetchProducts(page = 1) {
+  async function fetchProducts(page = 1, currentFilters = filters) {
     setLoading(true);
     try {
-      const raw = await getProducts(page);
-      setProducts({ success: true, data: raw.data });
+      const raw = await getProducts(page, currentFilters);
+      setProducts(raw);
       setCurrentPage(page);
       setLoading(false);
     } catch (err) {
@@ -35,8 +43,16 @@ function BrowseContent() {
   }
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    const newKeyword = searchParams.get('keyword') || "";
+    const newFilters = { ...filters, keyword: newKeyword };
+    setFilters(newFilters);
+    fetchProducts(1, newFilters);
+  }, [searchParams]);
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    fetchProducts(1, newFilters);
+  };
 
   if (products.success === false) {
     return (
@@ -56,7 +72,11 @@ function BrowseContent() {
   return (
     <div className="flex pt-18">
       <div className="w-64 bg-white fixed left-0 top-18 h-screen overflow-y-auto">
-        <FilterSidebar />
+        <FilterSidebar
+          filters={filters}
+          setFilters={setFilters}
+          onFilterChange={handleFilterChange}
+        />
       </div>
 
       <div className="flex-1 p-8 bg-white ml-64">
@@ -67,7 +87,27 @@ function BrowseContent() {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {products.success === true &&
+              {products.success === true && products.data.length === 0 ? (
+                <div className="col-span-full flex flex-col items-center justify-center py-12 text-gray-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-16 w-16 mb-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <h3 className="text-lg font-semibold">No products found</h3>
+                  <p>Try adjusting your filters or search query.</p>
+                </div>
+              ) : (
+                products.success === true &&
                 products.data.map((item, i) => (
                   <Link
                     href={`/products/${item.id}`}
@@ -94,10 +134,26 @@ function BrowseContent() {
                         </p>
                       </div>
 
-                      <p className="text-sm text-gray-500">{item.mainCategory}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <p className="text-sm text-gray-500">{item.mainCategory}</p>
+                        <span className="text-gray-300">|</span>
+                        <div className="flex items-center gap-1">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4 text-yellow-400 fill-current"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                          </svg>
+                          <span className="text-sm font-medium">
+                            {item.averageRating ? item.averageRating.toFixed(1) : "0.0"}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </Link>
-                ))}
+                ))
+              )}
             </div>
 
             {products.success === true && (

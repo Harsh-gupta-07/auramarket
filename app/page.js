@@ -5,13 +5,15 @@ import Hero from "@/components/Hero";
 import Trending from "@/components/Trending";
 
 export default function Home() {
-  return (<>
-    <Header />
-    <Hero/>
-    <BestOfAuramarket />
-    <Trending />
-    <Footer /> 
-    </>
+  return (
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-grow">
+        <Hero />
+        <BestOfAuramarket />
+        {/* <Trending /> */}
+      </main>
+      <Footer />
+    </div>
   );
 }
-

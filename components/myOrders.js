@@ -18,7 +18,7 @@ function MyOrders({ orders }) {
           </div>
           <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="col-span-2">
-              <p className={`text-sm font-medium mb-1 ${order.status == "Pending" ? "text-yellow-400" : "text-red-950"}`}>
+              <p className={`text-sm font-medium mb-1 ${order.status == "Pending" ? "text-yellow-400" : order.status == "Delivered" ? "text-green-400" : "text-red-400"}`}>
                 {order.status}
               </p>
               <h3 className="text-lg font-bold mb-1">{order.product.name}</h3>

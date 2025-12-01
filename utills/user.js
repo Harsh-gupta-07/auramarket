@@ -10,7 +10,7 @@ export async function userInfo() {
       },
     });
     const data = await res.json();
-    // console.log(data) 
+
     if (
       data?.message === "Authorization header missing" ||
       data?.message === "Invalid or expired token" ||
@@ -56,6 +56,10 @@ export async function updateProfile(data) {
     const token = localStorage.getItem("token");
     if (!token) {
       return { success: false, message: "Please login to continue" };
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      return { success: false, message: "Invalid email address" };
     }
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/update`, {
       method: "PUT",

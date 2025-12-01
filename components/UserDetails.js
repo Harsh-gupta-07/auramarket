@@ -7,6 +7,7 @@ export default function UserDetails({ user }) {
   const [formData, setFormData] = useState(user);
   const [editing, setEditing] = useState(false);
   const [status, setStatus] = useState("");
+  const [statusType, setStatusType] = useState(""); // "success" or "error"
   const [loading, setLoading] = useState(false);
 
   const handleChange = (field) => (event) => {
@@ -15,17 +16,19 @@ export default function UserDetails({ user }) {
   };
 
   const handleSave = async () => {
-
+    // e.preventDefault();
     setLoading(true);
     const res = await updateProfile(formData);
     setLoading(false);
+    console.log(res);
     if (res.success) {
       setEditing(false);
       setStatus("Profile updated successfully.");
+      setStatusType("success");
     } else {
       setLoading(false);
-      // setEditing(true);
       setStatus(res.message || "Failed to update profile.");
+      setStatusType("error");
     }
   };
 
@@ -94,10 +97,8 @@ export default function UserDetails({ user }) {
             </>
           )}
 
-          <p className="text-xs text-gray-500">
-            {editing
-              ? "You’re editing locally. Save when you’re happy."
-              : status || "Need something else? Contact support anytime."}
+          <p className={`text-xs ${statusType === "error" ? "text-red-500 font-bold" : "text-gray-500"}`}>
+            {status ? status : "Need something else? Contact support anytime."}
           </p>
         </div>
       </div>

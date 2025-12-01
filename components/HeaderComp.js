@@ -1,12 +1,15 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
 
 function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const [userToken, setUserToken] = useState(null);
+  const [searchValue, setSearchValue] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -14,6 +17,13 @@ function Header() {
       setUserToken(token);
     }
   }, []);
+
+  const handleSearch = (e) => {
+    if (e.key === "Enter") {
+      router.push(`/browse?keyword=${searchValue}`);
+      setShowSearch(false);
+    }
+  };
 
   return (
     <div className="navbar bg-white shadow-md px-6 fixed top-0 left-0 w-full z-50">
@@ -70,6 +80,9 @@ function Header() {
             type="text"
             placeholder="Search..."
             className="input input-bordered w-full max-w-xs bg-white border-black"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={handleSearch}
             onBlur={() => setShowSearch(false)}
             autoFocus
           />
@@ -85,7 +98,7 @@ function Header() {
           <div className="indicator">
             <FaShoppingCart className="text-lg" />
             <span className="badge badge-xs indicator-item bg-red-500 text-white">
-              3
+
             </span>
           </div>
         </Link>
