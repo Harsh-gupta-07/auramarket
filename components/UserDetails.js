@@ -83,7 +83,7 @@ export default function UserDetails({ user }) {
                 onClick={handleSave}
                 disabled={loading}
               >
-                {loading ? <span className="loading loading-spinner loading-lg"></span> : "Save changes"}
+                {loading ? <span className="loading loading-dots loading-lg"></span> : "Save changes"}
               </button>
               <button
                 className="btn btn-ghost rounded-full px-6"

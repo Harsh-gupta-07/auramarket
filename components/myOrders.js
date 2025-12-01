@@ -2,7 +2,6 @@ import React from "react";
 import { FaTrash, FaHeart } from "react-icons/fa";
 
 function MyOrders({ orders }) {
-  // console.log(orders)
   return (
     <div className="space-y-6">
       {orders.map((order) => (

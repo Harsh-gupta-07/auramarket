@@ -46,9 +46,6 @@ function Header() {
             <li>
               <Link href="/browse" className="btn btn-ghost textarea-md">Browse</Link>
             </li>
-            <li>
-              <Link href="/" className="btn btn-ghost textarea-md">Contact</Link>
-            </li>
           </ul>
         </div>
         <Link href="/">
@@ -63,9 +60,6 @@ function Header() {
           </li>
           <li>
             <Link href="/browse" className="btn btn-ghost">Browse</Link>
-          </li>
-          <li>
-            <Link href="/" className="btn btn-ghost">Contact</Link>
           </li>
         </ul>
       </div>
@@ -111,6 +105,11 @@ function Header() {
               tabIndex={0}
               className="menu dropdown-content bg-white rounded-box z-[1] w-40 p-2 shadow"
             >
+              <li>
+                <Link href="/profile" className="btn btn-ghost">
+                  Profile
+                </Link>
+              </li>
               <li>
                 <button
                   onClick={() => {

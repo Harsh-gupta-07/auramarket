@@ -33,7 +33,7 @@ function ProfilePageContent() {
       try {
         const data = await userInfo();
         // const orders= await getOrders()
-        // console.log(data.user.addresses)
+        // console.log(data)
         if (!isMounted) return;
         if (data?.login === false) {
           setNeedsLogin(true);
@@ -93,7 +93,6 @@ function ProfilePageContent() {
 
   return (
     <div className="container mx-auto p-6 max-w-5xl pt-22">
-      {/* Profile Header */}
       <div className="flex items-center gap-6 mb-10">
         <div className="avatar">
           <div className="w-24 rounded-full">
@@ -106,7 +105,6 @@ function ProfilePageContent() {
         </div>
       </div>
 
-      {/* Tabs */}
       <div className="border-b border-base-300 mb-8 overflow-x-auto">
         <div className="flex gap-8 min-w-max">
           {tabs.map((tab) => (
@@ -124,21 +122,19 @@ function ProfilePageContent() {
         </div>
       </div>
 
-      {/* Content */}
       <div className="min-h-[400px]">
         {activeTab === "My Orders" && (
           <MyOrders orders={user.orders} />
         )}
 
         {activeTab === "Favorites" && (
-          <Favourites favorites={user.favorites} />
+          <Favourites favorites={user.favourites} />
         )}
 
         {activeTab === "My Details" && (
           <UserDetails user={{ name: user.name, email: user.email, id: user.id }} />
         )}
 
-        {/* Placeholders for other tabs */}
         {activeTab === "Address Book" && (
           <Address addresses={user.addresses} />
         )}

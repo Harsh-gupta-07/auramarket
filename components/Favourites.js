@@ -2,9 +2,10 @@ import React from 'react'
 import { FaTrash, FaHeart } from "react-icons/fa";
 
 function Favourites({ favorites }) {
+  // console.log(favorites);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {(!favorites || favorites.length === 0) ? (
         <div className="col-span-full flex flex-col items-center justify-center py-12 text-center">
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -20,26 +21,26 @@ function Favourites({ favorites }) {
         </div>
       ) : (
         favorites.map((item) => (
-          <div key={item.id} className="card bg-white hover:shadow-lg transition-shadow duration-200 group">
-            <figure className="relative bg-white aspect-square">
-              <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover mix-blend-multiply" />
+          <div key={item.id} className="card card-compact bg-white hover:shadow-lg transition-shadow duration-200 group overflow-hidden border border-gray-100">
+            <figure className="relative bg-white aspect-square overflow-hidden">
+              <img src={item.product.image} alt={item.product.name} className="w-full h-full object-cover mix-blend-multiply hover:scale-105 transition-transform duration-300" />
               {item.tag && (
-                <div className={`absolute top-3 left-3 badge ${item.tagColor} border-none text-xs font-semibold py-3`}>
+                <div className={`absolute top-2 left-2 badge ${item.tagColor} border-none text-xs font-semibold py-2`}>
                   {item.tag}
                 </div>
               )}
-              <button className="absolute top-3 right-3 btn btn-circle btn-sm btn-ghost bg-white/50 hover:bg-white text-black">
+              <button className="absolute top-2 right-2 btn btn-circle btn-xs btn-ghost bg-white/50 hover:bg-white text-black">
                 <FaHeart />
               </button>
             </figure>
-            <div className="card-body p-4">
+            <div className="card-body p-3">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-bold text-sm mb-1">{item.product.name}</h3>
-                  <p className="text-gray-500 text-xs mb-1">{item.product.category}</p>
-                  <p className="text-gray-400 text-xs">{item.product.colors}</p>
+                  <h3 className="font-bold text-sm mb-0.5 truncate max-w-[120px]">{item.product.name}</h3>
+                  <p className="text-gray-500 text-[10px] mb-0.5">{item.product.category}</p>
+                  <p className="text-gray-400 text-[10px]">{item.product.colors}</p>
                 </div>
-                <p className="font-bold text-sm">${item.product.price.toFixed(2)}</p>
+                <p className="font-bold text-sm text-right text-primary">${item.product.price.toFixed(2)}</p>
               </div>
             </div>
           </div>
@@ -49,4 +50,4 @@ function Favourites({ favorites }) {
   )
 }
 
-export default Favourites
+export default Favourites;

@@ -18,7 +18,7 @@ export default function AddressModal({ draft, onChange, onClose, onSubmit, loadi
               onClick={onSubmit}
               disabled={loading}
             >
-              {loading ? <span className="loading loading-spinner loading-xs"></span> : draft.id ? "Update Address" : "Add Address"}
+              {loading ? <span className="loading loading-dots loading-xs"></span> : draft.id ? "Update Address" : "Add Address"}
 
             </button>
             <button
