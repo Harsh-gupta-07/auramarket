@@ -7,6 +7,7 @@ import {
   increaseQuantity,
   decreaseQuantity,
 } from "../../utills/cart";
+import Link from "next/link";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
@@ -206,9 +207,12 @@ export default function CartPage() {
                 <span>${total.toFixed(2)}</span>
               </div>
 
-              <button className="btn btn-neutral w-full text-white mt-4 rounded-full">
+              <Link
+                href="/checkout"
+                className="btn btn-neutral w-full text-white mt-4 rounded-full"
+              >
                 Proceed to Checkout
-              </button>
+              </Link>
             </div>
           </div>
         </>

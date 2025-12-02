@@ -1,5 +1,6 @@
 "use client";
 import Squares from "@/components/Squares";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import isStrongPassword from "@/utills/passwordValidator";
 import { signup } from "@/utills/signup";
 import Image from "next/image";
@@ -12,7 +13,9 @@ export default function page() {
   const name = useRef("")
   const email = useRef("")
   const password = useRef("")
-  const [load,setLoad] = useState(false)
+  const [load, setLoad] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+
   async function handle() {
     const refemail = email.current.value;
     const refpassword = password.current.value;
@@ -23,33 +26,31 @@ export default function page() {
     }
     if (!refpassword || refpassword.trim()) {
       const check = isStrongPassword(refpassword)
-      if (!check.passed){
+      if (!check.passed) {
         return setError(check.msg)
       }
     }
-    if (!fullname || fullname.trim()=="") {
+    if (!fullname || fullname.trim() == "") {
       return setError("Name cannot be empty.");
     }
     setLoad(true)
     setError("")
-    const res = await signup(fullname,refemail,refpassword)
-    if (res.status=="failed"){
+    const res = await signup(fullname, refemail, refpassword)
+    if (res.status == "failed") {
       setLoad(false)
       return setError(res.message)
     }
     setError("")
-    localStorage.setItem("token",res.token)
-    redirect("/",RedirectType.replace)
+    localStorage.setItem("token", res.token)
+    redirect("/", RedirectType.replace)
   }
   return (
     <div className="flex h-screen">
-      {/* Left Section */}
       <div className="absolute inset-0 z-0">
         <Squares />
       </div>
       <div className="w-1/2 bg-black text-white flex flex-col justify-between p-10">
         <div className="z-10">
-          {/* Logo */}
           <div className="">
             <p className=" text-xl font-semibold">AuraMarket</p>
           </div>
@@ -68,7 +69,6 @@ export default function page() {
         </p>
       </div>
 
-      {/* Right Section */}
       <div className="bg-white w-1/2 flex justify-center items-center relative">
         <div className="w-[420px]">
           <p className="text-center text-gray-600 text-sm font-light">
@@ -88,7 +88,6 @@ export default function page() {
             Create your account to start your Shopping journey
           </p>
 
-          {/* Social Buttons */}
           <div className="flex flex-col gap-3">
             <button className="btn btn-outline w-full gap-2 rounded-full">
               <span>
@@ -108,7 +107,6 @@ export default function page() {
             Or sign up with
           </div>
 
-          {/* Form */}
           <div className="flex flex-col gap-4">
             <div>
               <label className="label">
@@ -138,12 +136,21 @@ export default function page() {
               <label className="label">
                 <span className="label-text font-medium">Password</span>
               </label>
-              <input
-                type="text"
-                ref={password}
-                placeholder="password"
-                className="bg-white input input-neutral w-full rounded-xl"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  ref={password}
+                  placeholder="password"
+                  className="bg-white input input-neutral w-full rounded-xl pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                </button>
+              </div>
               <p className="text-xs text-gray-600 pt-2 p-1">Minimum 8 charcters including upper and lower case characters, numbers and speical characters.</p>
             </div>
 

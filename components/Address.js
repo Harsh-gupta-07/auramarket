@@ -159,9 +159,17 @@ export default function Address({ addresses }) {
   );
 }
 
-function AddressCard({ address, isPrimary, onSetPrimary, onDelete, onEdit }) {
+export function AddressCard({ address, isPrimary, onSetPrimary, onDelete, onEdit, onSelect, isSelected }) {
   return (
-    <article className="relative p-6 rounded-2xl border border-gray-100 bg-gray-50/40 hover:border-gray-300 transition-all">
+    <article
+      onClick={() => onSelect && onSelect(address)}
+      className={`relative p-6 rounded-2xl border bg-gray-50/40 transition-all cursor-pointer
+        ${isSelected
+          ? 'border-black ring-1 ring-black shadow-md'
+          : 'border-gray-100 hover:border-gray-300'
+        }
+      `}
+    >
       <div className="flex items-center justify-between gap-4 mb-4">
         <span className="text-xs font-semibold tracking-[0.3em] uppercase text-gray-400">
           {address.label}

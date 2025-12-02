@@ -2,12 +2,12 @@
 import React, { Suspense, useEffect, useState } from "react";
 import MyOrders from "@/components/myOrders";
 import Favourites from "@/components/Favourites";
-import Image from "next/image";
 import UserDetails from "@/components/UserDetails";
 import Address from "@/components/Address";
 import { useSearchParams } from 'next/navigation';
 import { userInfo } from "@/utills/user";
 import Link from "next/link";
+import Image from "next/image";
 export default function ProfilePage() {
   return (
     <Suspense fallback={<div className="p-6">Loading profile...</div>}>
@@ -96,7 +96,7 @@ function ProfilePageContent() {
       <div className="flex items-center gap-6 mb-10">
         <div className="avatar">
           <div className="w-24 rounded-full">
-            <Image src="profile.svg" alt="profile-pic" width={48} height={48} />
+            <Image src="/profile.png" alt="profile-pic" width={48} height={48} />
           </div>
         </div>
         <div>

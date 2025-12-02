@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaShoppingCart } from "react-icons/fa";
 
@@ -107,10 +107,11 @@ function Header() {
             <div tabIndex={0} role="button" className="btn btn-ghost btn-circle hover:bg-white hover:border-none hover:shadow-none active:bg-white">
               <div className="w-10 rounded-full">
                 <Image
-                  src="/profile.svg"
+                  src="/profile.png"
                   alt="Profile"
                   width={40}
                   height={40}
+                  className="rounded-full"
                 />
               </div>
             </div>
@@ -127,7 +128,7 @@ function Header() {
                 <button
                   onClick={() => {
                     localStorage.removeItem("token");
-                    window.location.reload();
+                    redirect("/login");
                   }}
                   className="btn btn-ghost"
                 >

@@ -2,6 +2,7 @@
 import Squares from "@/components/Squares";
 import { login } from "@/utills/login";
 import isStrongPassword from "@/utills/passwordValidator";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useRef, useState } from "react";
@@ -12,9 +13,12 @@ export default function page() {
   const email = useRef("");
   const [error, setError] = useState("");
   const [load, setLoad] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   async function handle() {
     const refemail = email.current.value;
     const refpassword = password.current.value;
+    console.log(refemail, refpassword);
     if (!refemail || refemail.trim() == "") {
       return setError("Please Enter a valid Email.");
     }
@@ -38,13 +42,11 @@ export default function page() {
 
   return (
     <div className="flex h-screen">
-      {/* Left Section */}
       <div className="absolute inset-0 z-0">
         <Squares />
       </div>
       <div className="w-1/2 bg-black text-white flex flex-col justify-between p-10">
         <div className="z-10 min-h-[40dvh] flex flex-col justify-between">
-          {/* Logo */}
           <div>
             <p className="text-xl font-semibold">AuraMarket</p>
           </div>
@@ -62,7 +64,6 @@ export default function page() {
         </p>
       </div>
 
-      {/* Right Section */}
       <div className="bg-white  w-1/2 flex justify-center items-center relative">
         <div className="w-[420px]">
           <p className="text-center text-gray-600 text-sm font-light">
@@ -79,7 +80,6 @@ export default function page() {
             Welcome Back
           </h2>
 
-          {/* Social Buttons */}
           <div className="flex flex-col gap-3">
             <button className="btn btn-outline w-full gap-2 rounded-full">
               <span>
@@ -99,7 +99,6 @@ export default function page() {
             Or sign in with
           </div>
 
-          {/* Form */}
           <div className="flex flex-col gap-4">
             <div>
               <label className="label">
@@ -117,12 +116,21 @@ export default function page() {
               <label className="label">
                 <span className="label-text font-medium">Password</span>
               </label>
-              <input
-                type="password"
-                ref={password}
-                placeholder="password"
-                className="bg-white input input-neutral w-full rounded-xl"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  ref={password}
+                  placeholder="password"
+                  className="bg-white input input-neutral w-full rounded-xl pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                </button>
+              </div>
             </div>
             <div>
               {error ? (
