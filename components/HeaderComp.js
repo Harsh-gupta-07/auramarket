@@ -128,7 +128,7 @@ function Header() {
                 <button
                   onClick={() => {
                     localStorage.removeItem("token");
-                    redirect("/login");
+                    redirect("/signin");
                   }}
                   className="btn btn-ghost"
                 >

@@ -80,23 +80,8 @@ export default function page() {
             Welcome Back
           </h2>
 
-          <div className="flex flex-col gap-3">
-            <button className="btn btn-outline w-full gap-2 rounded-full">
-              <span>
-                <Image
-                  src="/google.svg"
-                  className="text-red"
-                  alt="google"
-                  width={16}
-                  height={16}
-                />
-              </span>{" "}
-              Continue with Google
-            </button>
-          </div>
-
           <div className="divider divider-neutral text-sm font-light text-gray-800">
-            Or sign in with
+            Sign in with
           </div>
 
           <div className="flex flex-col gap-4">
