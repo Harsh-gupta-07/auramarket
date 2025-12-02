@@ -21,7 +21,7 @@ export default function Hero() {
           </h1>
 
           <p className="text-lg sm:text-xl text-gray-800 max-w-lg mx-auto md:mx-0">
-            From fashion to electronics, home essentials to gifts — explore everything you need, all in one place.
+            From fashion to electronics, home essentials to gifts explore everything you need, all in one place.
           </p>
 
           <div className="flex justify-center md:justify-start">
